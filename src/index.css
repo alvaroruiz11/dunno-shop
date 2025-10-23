@@ -1,9 +1,25 @@
+@font-face {
+  font-family: 'Din Next';
+  src: url('/assets/fonts/din-next/din-next-medium.otf') format('opentype');
+}
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --font-din-next: 'Din Next', 'sans-serif';
+
+  --animate-fade-in: fadeIn ease-in 0.3s;
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

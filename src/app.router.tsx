@@ -7,7 +7,8 @@ import { CategoryPage } from './shop/pages/category/CategoryPage';
 import { CartPage } from './shop/pages/cart/CartPage';
 import { ShopLayout } from './shop/layouts/ShopLayout';
 import { ProductPage } from './shop/pages/product/ProductPage';
-import TermsConditionsPage from '';
+import { authRouter } from './auth/auth.router';
+import { ProfileRoute } from './components/routes/ProtectedRoutes';
 
 // lazy
 const CheckoutLayout = lazy(() => import('./shop/layouts/CheckoutLayout'));
@@ -15,6 +16,8 @@ const CheckoutPage = lazy(() => import('./shop/pages/checkout/CheckoutPage'));
 const TermsConditionsPage = lazy(
   () => import('./shop/pages/terms-conditions/TermsConditionsPage')
 );
+
+const ProfilePage = lazy(() => import('./shop/pages/profile/ProfilePage'));
 
 export const appRouter = createBrowserRouter([
   // Shop
@@ -46,6 +49,14 @@ export const appRouter = createBrowserRouter([
         path: 'terminos-y-condiciones',
         element: <TermsConditionsPage />,
       },
+      {
+        path: 'profile',
+        element: (
+          <ProfileRoute>
+            <ProfilePage />
+          </ProfileRoute>
+        ),
+      },
     ],
   },
   // Checkout
@@ -59,4 +70,7 @@ export const appRouter = createBrowserRouter([
       },
     ],
   },
+
+  // Auth
+  authRouter,
 ]);

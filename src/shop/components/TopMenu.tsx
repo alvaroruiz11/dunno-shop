@@ -12,12 +12,14 @@ import { Button } from '@/components/ui/button';
 
 import { useCartStore } from '@/store/cart/cart-store';
 import { CustomLogo } from '@/components/custom/CustomLogo';
+import { useAuthStore } from '@/store/auth/auth.store';
 
 // import { useCategories } from '@/categories/hooks/useCategories';
 
 export const TopMenu = () => {
   // const { data: categories = [] } = useCategories();
 
+  const authStatus = useAuthStore((state) => state.authStatus);
   const { openCartSidebar } = useCartStore();
   const totalItemsInCart = useCartStore((state) => state.getTotalItems());
 
@@ -48,7 +50,11 @@ export const TopMenu = () => {
               variant="ghost"
               asChild
             >
-              <Link to="/auth/login">
+              <Link
+                to={`${
+                  authStatus === 'authenticated' ? '/profile' : '/auth/login'
+                }`}
+              >
                 <User className="size-5.5" />
               </Link>
             </Button>
