@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -117,4 +117,14 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* section style */
+.section {
+  @apply py-14 xl:py-20;
+}
+
+/* container */
+.container {
+  @apply mx-auto max-w-[1400px]!;
 }
