@@ -9,6 +9,7 @@ import { ShopLayout } from './shop/layouts/ShopLayout';
 import { ProductPage } from './shop/pages/product/ProductPage';
 import { authRouter } from './auth/auth.router';
 import { ProfileRoute } from './components/routes/ProtectedRoutes';
+import { adminRouter } from './admin/admin.router';
 
 // lazy
 const CheckoutLayout = lazy(() => import('./shop/layouts/CheckoutLayout'));
@@ -73,4 +74,7 @@ export const appRouter = createBrowserRouter([
 
   // Auth
   authRouter,
+
+  // Admin
+  adminRouter,
 ]);

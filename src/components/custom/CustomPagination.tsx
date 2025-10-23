@@ -26,7 +26,7 @@ export const CustomPagination = ({ totalPages }: Props) => {
   }, [searchParams]);
 
   return (
-    <div className="my-12 flex items-center justify-center gap-1">
+    <div className="flex items-center justify-center gap-1">
       <Button
         variant="outline"
         size="sm"
