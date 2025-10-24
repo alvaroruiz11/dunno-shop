@@ -8,10 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 
-export const AdminSellerPage = () => {
+export const AdminCustomerPage = () => {
   return (
     <>
-      <AdminTitle title="Crear vendedor" />
+      <AdminTitle title="Crear cliente" />
       <div className="mt-6">
         {/* TODO: puede ser un UserForm */}
         <form>
@@ -94,4 +94,4 @@ export const AdminSellerPage = () => {
   );
 };
 
-export default AdminSellerPage;
+export default AdminCustomerPage;

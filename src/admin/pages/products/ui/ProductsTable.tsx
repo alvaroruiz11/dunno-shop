@@ -10,8 +10,8 @@ import {
   TableBody,
   TableCell,
 } from '@/components/ui/table';
-import type { Product } from '../interfaces/product.interface';
-import { currencyFormatter, dateFormatter } from '../../lib/formatter';
+import { currencyFormatter, dateFormatter } from '@/lib/formatter';
+import type { Product } from '@/products/interfaces/product.interface';
 
 interface Props {
   products: Product[];

@@ -1,21 +1,17 @@
-import { Link } from 'react-router';
 import { Plus } from 'lucide-react';
+import { Link } from 'react-router';
 
 import { AdminTitle } from '@/admin/components/AdminTitle';
-import { CustomPagination } from '@/components/custom/CustomPagination';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { CustomPagination } from '@/components/custom/CustomPagination';
+import { CustomersTable } from './ui/CustomersTable';
 
-import { useProducts } from '@/products/hooks/useProducts';
-import { ProductsTable } from './ui/ProductsTable';
-
-export const AdminProductsPage = () => {
-  const { products, totalPages } = useProducts();
-
+export const AdminCustomersPage = () => {
   return (
     <>
-      <AdminTitle title="Productos" />
+      <AdminTitle title="Clientes" />
       <div className="mt-6">
         <Card className="shadow-none rounded-md">
           <CardContent className="p-0">
@@ -28,17 +24,17 @@ export const AdminProductsPage = () => {
                 />
               </div>
               <Button size="sm" asChild>
-                <Link to="/admin/productos/crear">
+                <Link to="/admin/clientes/crear">
                   <Plus />
                   Nuevo
                 </Link>
               </Button>
             </div>
             <div className="mt-4 pl-5">
-              <ProductsTable products={products || []} />
+              <CustomersTable />
             </div>
             <div className="p-6 flex justify-end items-center">
-              <CustomPagination totalPages={totalPages || 0} />
+              <CustomPagination totalPages={0} />
             </div>
           </CardContent>
         </Card>
@@ -47,4 +43,4 @@ export const AdminProductsPage = () => {
   );
 };
 
-export default AdminProductsPage;
+export default AdminCustomersPage;
