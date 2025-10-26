@@ -8,8 +8,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { SellersTable } from './ui/SellersTable';
 import { CustomPagination } from '@/components/custom/CustomPagination';
+import { useUsers } from '@/users/hooks/useUsers';
 
 export const AdminSellersPage = () => {
+  const { data } = useUsers('seller');
+
   return (
     <>
       <AdminTitle title="Vendedores" />
@@ -32,10 +35,10 @@ export const AdminSellersPage = () => {
               </Button>
             </div>
             <div className="mt-4 pl-5">
-              <SellersTable />
+              <SellersTable sellers={data?.data ?? []} />
             </div>
             <div className="p-6 flex justify-end items-center">
-              <CustomPagination totalPages={0} />
+              <CustomPagination totalPages={data?.meta.totalPages ?? 0} />
             </div>
           </CardContent>
         </Card>

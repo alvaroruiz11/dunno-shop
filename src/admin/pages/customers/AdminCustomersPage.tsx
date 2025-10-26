@@ -7,8 +7,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { CustomPagination } from '@/components/custom/CustomPagination';
 import { CustomersTable } from './ui/CustomersTable';
+import { useUsers } from '@/users/hooks/useUsers';
 
 export const AdminCustomersPage = () => {
+  const { data } = useUsers('customer');
+
   return (
     <>
       <AdminTitle title="Clientes" />
@@ -31,10 +34,10 @@ export const AdminCustomersPage = () => {
               </Button>
             </div>
             <div className="mt-4 pl-5">
-              <CustomersTable />
+              <CustomersTable customers={data?.data || []} />
             </div>
             <div className="p-6 flex justify-end items-center">
-              <CustomPagination totalPages={0} />
+              <CustomPagination totalPages={data?.meta.totalPages || 0} />
             </div>
           </CardContent>
         </Card>

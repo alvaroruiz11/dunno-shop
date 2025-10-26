@@ -8,6 +8,7 @@ import { useState, type InputHTMLAttributes } from 'react';
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
+  className?: string;
 }
 
 export const CustomPasswordInput = ({
@@ -17,7 +18,7 @@ export const CustomPasswordInput = ({
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <InputGroup>
+    <InputGroup className={props.className}>
       <InputGroupInput
         type={showPassword ? 'text' : 'password'}
         placeholder={placeholder}
