@@ -47,7 +47,10 @@ export const ProductForm = ({ product, categories, onSubmit }: Props) => {
     },
   });
 
+  const [files, setFiles] = useState<File[]>([]);
+
   const variants = watch('variants');
+  const currentImages = watch('images');
 
   // variants
   const addVariant = (variant: Variant) => {
@@ -62,6 +65,13 @@ export const ProductForm = ({ product, categories, onSubmit }: Props) => {
     setValue('variants', Array.from(variantSet));
   };
 
+  const removeImage = (imageName: string) => {
+    if (currentImages.length === 1) return;
+    const imagesSet = new Set(getValues('images'));
+    imagesSet.delete(imageName);
+    setValue('images', Array.from(imagesSet));
+  };
+
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -70,6 +80,28 @@ export const ProductForm = ({ product, categories, onSubmit }: Props) => {
     } else if (e.type === 'dragleave') {
       setDragActive(false);
     }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    const files = e.dataTransfer.files;
+    if (!files) return;
+
+    setFiles((prev) => [...prev, ...Array.from(files)]);
+
+    const currentFiles = getValues('files') || [];
+    setValue('files', [...currentFiles, ...Array.from(files)]);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    setFiles((prev) => [...prev, ...Array.from(files)]);
+    const currentFiles = getValues('files') || [];
+    setValue('files', [...currentFiles, ...Array.from(files)]);
   };
 
   return (
@@ -98,6 +130,29 @@ export const ProductForm = ({ product, categories, onSubmit }: Props) => {
                 )}
               </Field>
               <Field>
+                <FieldLabel>Genero</FieldLabel>
+                <NativeSelect
+                  {...register('gender', {
+                    required: 'El campo es requerido',
+                  })}
+                  defaultValue=""
+                  className={cn({ 'border-destructive': errors.gender })}
+                >
+                  <NativeSelectOption value="">
+                    Seleccionar genero
+                  </NativeSelectOption>
+                  <NativeSelectOption value="MEN">Hombre</NativeSelectOption>
+                  <NativeSelectOption value="WOMEN">Mujer</NativeSelectOption>
+                  <NativeSelectOption value="KID">Niños</NativeSelectOption>
+                  <NativeSelectOption value="UNISEX">Unisex</NativeSelectOption>
+                </NativeSelect>
+                {errors.gender && (
+                  <p className="text-destructive text-xs">
+                    {errors.gender.message}
+                  </p>
+                )}
+              </Field>
+              <Field className="md:col-span-2">
                 <FieldLabel>Categoría</FieldLabel>
                 <NativeSelect
                   {...register('categoryId', {
@@ -121,6 +176,7 @@ export const ProductForm = ({ product, categories, onSubmit }: Props) => {
                   </p>
                 )}
               </Field>
+
               <Field className="md:col-span-2">
                 <FieldLabel>Descripción</FieldLabel>
                 <Textarea
@@ -148,13 +204,14 @@ export const ProductForm = ({ product, categories, onSubmit }: Props) => {
               onDragEnter={handleDrag}
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
-              // onDrop={handleDrop}
+              onDrop={handleDrop}
             >
               <input
                 type="file"
                 multiple
                 accept="image/*"
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                onChange={handleFileChange}
               />
               <div className="space-y-4">
                 <CloudUpload className="mx-auto text-muted-foreground size-9" />
@@ -173,6 +230,48 @@ export const ProductForm = ({ product, categories, onSubmit }: Props) => {
                 </div>
               </div>
             </div>
+            <div className="space-y-3 mt-2">
+              <h3 className="text-xs font-medium text-muted-foreground">
+                Imágenes actuales
+              </h3>
+              <div className="flex flex-wrap gap-2 items-center">
+                {currentImages.map((image, index) => (
+                  <div key={index} className="relative group w-14 h-14">
+                    <div className="aspect-square rounded-lg flex items-center justify-center">
+                      <img
+                        src={image}
+                        alt="Product"
+                        className="w-14 h-14 object-cover rounded-lg"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      className="cursor-pointer absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      onClick={() => removeImage(image)}
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div
+              className={cn('mt-4 space-y-3', { hidden: files.length === 0 })}
+            >
+              <h3 className="text-xs font-medium text-muted-foreground">
+                Imágenes por cargar
+              </h3>
+              <div className="flex flex-wrap gap-2 items-center">
+                {files.map((file, index) => (
+                  <img
+                    key={index}
+                    src={URL.createObjectURL(file)}
+                    alt="Product"
+                    className="rounded-lg w-14 h-14 object-cover"
+                  />
+                ))}
+              </div>
+            </div>
           </CardContent>
         </Card>
         {/* Precios */}
@@ -188,7 +287,7 @@ export const ProductForm = ({ product, categories, onSubmit }: Props) => {
                 <FieldLabel>Precio Costo (Bs.)</FieldLabel>
                 <Input
                   {...register('costPrice', { required: true, min: 1 })}
-                  type="number"
+                  type="text"
                   placeholder="0"
                   className={cn({ 'border-destructive': errors.costPrice })}
                 />
@@ -202,7 +301,7 @@ export const ProductForm = ({ product, categories, onSubmit }: Props) => {
                 <FieldLabel>Precio Venta (Bs.)</FieldLabel>
                 <Input
                   {...register('price', { required: true, min: 1 })}
-                  type="number"
+                  type="text"
                   placeholder="0"
                 />
                 {errors.price && (
@@ -213,12 +312,7 @@ export const ProductForm = ({ product, categories, onSubmit }: Props) => {
               </Field>
               <Field className="md:col-span-2">
                 <FieldLabel>Descuento (%)</FieldLabel>
-                <Input
-                  {...register('discount')}
-                  type="number"
-                  min="0"
-                  placeholder="0"
-                />
+                <Input {...register('discount')} type="text" placeholder="0" />
               </Field>
             </div>
           </CardContent>

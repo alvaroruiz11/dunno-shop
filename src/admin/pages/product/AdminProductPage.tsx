@@ -5,6 +5,7 @@ import { useProduct } from '@/products/hooks/useProduct';
 import { Navigate, useParams } from 'react-router';
 import { CustomFullScreenLoading } from '@/components/custom/CustomFullScreenLoading';
 import { useCategories } from '@/categories/hooks/useCategories';
+import { createUpdateProductAction } from '@/products/actions/create-update-product.action';
 
 export const AdminProductPage = () => {
   const { id } = useParams();
@@ -14,7 +15,7 @@ export const AdminProductPage = () => {
   const { data: product, isLoading, isError } = useProduct(id || '');
 
   const handleSubmit = (data: Partial<Product>) => {
-    console.log({ data });
+    createUpdateProductAction(data);
   };
 
   if (isLoading) {

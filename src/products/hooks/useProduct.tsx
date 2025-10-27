@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getProductByTermAction } from '../actions/get-product-by-term.action';
-import { createUpdateProductAction } from '../actions/create-update-product.action';
 
 export const useProduct = (id: string) => {
   const queryClient = useQueryClient();
