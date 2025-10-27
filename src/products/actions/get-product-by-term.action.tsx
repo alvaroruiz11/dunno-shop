@@ -4,19 +4,23 @@ import type { Product } from '../interfaces/product.interface';
 export const getProductByTermAction = async (
   term: string
 ): Promise<Product> => {
-  // if (term === 'nuevo') {
-  //   return {
-  //     id: 'nuevo',
-  //     title: '',
-  //     price: 0,
-  //     slug: '',
-  //     description: '',
-  //     gender: 'men',
-  //     sizes: [],
-  //     images: [],
-  //     created_at: new Date(),
-  //     category: { id: '', name: '' },
-  //   };
+  if (term === 'crear') {
+    return {
+      id: 'crear',
+      category: { id: '', name: '' },
+      costPrice: 0,
+      createdAt: new Date(),
+      description: '',
+      gender: '',
+      images: [],
+      price: 0,
+      salePrice: 0,
+      slug: '',
+      tags: [],
+      title: '',
+      variants: [],
+    };
+  }
   // }
 
   try {

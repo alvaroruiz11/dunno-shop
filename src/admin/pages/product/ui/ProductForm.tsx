@@ -16,7 +16,8 @@ import { ProductVariantsCard } from './ProductVariantsCard';
 import { cn } from '@/lib/utils';
 import { slugPattern } from '@/lib/form-utils';
 
-import type { Product } from '@/products/interfaces/product.interface';
+import type { Product, Variant } from '@/products/interfaces/product.interface';
+import type { Category } from '@/categories/interfaces/category.interface';
 
 interface FormProduct extends Product {
   categoryId: string;
@@ -24,12 +25,42 @@ interface FormProduct extends Product {
   discount?: number;
 }
 
-export const ProductForm = () => {
+interface Props {
+  product: Product;
+  categories: Category[];
+  onSubmit: (productLike: Partial<FormProduct>) => void;
+}
+
+export const ProductForm = ({ product, categories, onSubmit }: Props) => {
   const [dragActive, setDragActive] = useState(false);
   const {
     register,
+    handleSubmit,
+    watch,
+    getValues,
+    setValue,
     formState: { errors },
-  } = useForm<FormProduct>();
+  } = useForm<FormProduct>({
+    defaultValues: {
+      ...product,
+      categoryId: product.category.id,
+    },
+  });
+
+  const variants = watch('variants');
+
+  // variants
+  const addVariant = (variant: Variant) => {
+    const variantSet = new Set(getValues('variants'));
+    variantSet.add(variant);
+    setValue('variants', Array.from(variantSet));
+  };
+
+  const removeVariant = (variant: Variant) => {
+    const variantSet = new Set(getValues('variants'));
+    variantSet.delete(variant);
+    setValue('variants', Array.from(variantSet));
+  };
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -42,7 +73,7 @@ export const ProductForm = () => {
   };
 
   return (
-    <form>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
         {/* Informacion basica */}
         <Card className="rounded-md">
@@ -78,6 +109,11 @@ export const ProductForm = () => {
                   <NativeSelectOption value="">
                     Seleccionar categoría
                   </NativeSelectOption>
+                  {categories.map((category) => (
+                    <NativeSelectOption key={category.id} value={category.id}>
+                      {category.name}
+                    </NativeSelectOption>
+                  ))}
                 </NativeSelect>
                 {errors.categoryId && (
                   <p className="text-destructive text-xs">
@@ -224,7 +260,11 @@ export const ProductForm = () => {
           </CardContent>
         </Card>
         {/* Variantes Productos */}
-        <ProductVariantsCard />
+        <ProductVariantsCard
+          variants={variants}
+          onAddVariant={addVariant}
+          onRemoveVariant={removeVariant}
+        />
       </div>
       <div className="mt-6 flex justify-end items-center gap-3">
         <Button size="sm" variant="ghost" type="button" asChild>

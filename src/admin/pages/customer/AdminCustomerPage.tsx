@@ -1,20 +1,33 @@
-import { Navigate, useParams } from 'react-router';
-
+import { Navigate, useNavigate, useParams } from 'react-router';
 import { AdminTitle } from '@/admin/components/AdminTitle';
-
 import { UserForm } from '@/users/components/UserForm';
-
 import { useUser } from '@/users/hooks/useUser';
-import type { User } from '@/users/interfaces/users-response.interface';
 import { CustomFullScreenLoading } from '@/components/custom/CustomFullScreenLoading';
+import type { User } from '@/users/interfaces/users-response.interface';
+import { toast } from 'sonner';
 
 export const AdminCustomerPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
-  const { data: user, isLoading, isError } = useUser(id || '');
+  const { data: user, isLoading, isError, mutation } = useUser(id || '');
 
-  const handleSubmit = (data: Partial<User>) => {
-    console.log({ data });
+  const handleSubmit = async (data: Partial<User>) => {
+    await mutation.mutateAsync(
+      { ...data },
+      {
+        onSuccess: (customer) => {
+          toast.success('Cliente datos guardados', { position: 'top-right' });
+          navigate(`/admin/clientes/${customer.id}`, { replace: true });
+        },
+        onError: (error) => {
+          console.log(error);
+          toast.error('Error al guardar datos del cliente', {
+            position: 'top-right',
+          });
+        },
+      }
+    );
   };
 
   if (isLoading) {

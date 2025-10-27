@@ -21,9 +21,6 @@ export const SideBar = () => {
         </div>
 
         <div className="flex min-h-0 p-2 flex-1 flex-col gap-2 overflow-auto">
-          <div className="text-sidebar-foreground/70 flex h-8 shrink-0 items-center px-3 text-xs font-bold">
-            E-Commerce
-          </div>
           <NavLink
             to="/admin/dashboard"
             className={({ isActive }) =>
@@ -39,6 +36,9 @@ export const SideBar = () => {
             <LayoutDashboard className="size-4" />
             <span>Dashboard</span>
           </NavLink>
+          <div className="text-sidebar-foreground/70 flex h-8 shrink-0 items-center px-3 text-xs font-bold">
+            E-Commerce
+          </div>
           <NavLink
             to="/admin/categorias"
             className={({ isActive }) =>

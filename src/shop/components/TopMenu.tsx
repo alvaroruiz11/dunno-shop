@@ -1,27 +1,31 @@
 import { Link, NavLink } from 'react-router';
 import { Menu, Search, ShoppingCart, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-// import {
-//   NavigationMenu,
-//   NavigationMenuContent,
-//   NavigationMenuItem,
-//   NavigationMenuLink,
-//   NavigationMenuList,
-//   NavigationMenuTrigger,
-// } from '@/components/ui/navigation-menu';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from '@/components/ui/navigation-menu';
 
 import { useCartStore } from '@/store/cart/cart-store';
 import { CustomLogo } from '@/components/custom/CustomLogo';
 import { useAuthStore } from '@/store/auth/auth.store';
-
-// import { useCategories } from '@/categories/hooks/useCategories';
+import { useCategories } from '@/categories/hooks/useCategories';
+import { CustomFullScreenLoading } from '@/components/custom/CustomFullScreenLoading';
 
 export const TopMenu = () => {
-  // const { data: categories = [] } = useCategories();
+  const { categories = [], isLoading } = useCategories();
 
   const authStatus = useAuthStore((state) => state.authStatus);
   const { openCartSidebar } = useCartStore();
   const totalItemsInCart = useCartStore((state) => state.getTotalItems());
+
+  if (isLoading) {
+    return <CustomFullScreenLoading />;
+  }
 
   return (
     <nav className="bg-white sticky w-full z-20 top-0 start-0 border-b border-gray-200">
@@ -78,7 +82,7 @@ export const TopMenu = () => {
         </div>
         <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1">
           <ul className="flex font-din-next font-bold md:space-x-8 flex-row items-center">
-            {/* <li>
+            <li>
               <NavigationMenu>
                 <NavigationMenuList>
                   <NavigationMenuItem>
@@ -86,13 +90,11 @@ export const TopMenu = () => {
                       VER TODO
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
-                      <ul className="text-muted-foreground font-medium w-[150px]">
+                      <ul className="text-muted-foreground font-medium w-[140px]">
                         {categories.map((category) => (
                           <li key={category.id}>
                             <NavigationMenuLink asChild>
-                              <Link
-                                to={`/categoria/${category.name.toLowerCase()}`}
-                              >
+                              <Link to={`/categoria/${category.slug}`}>
                                 {category.name}
                               </Link>
                             </NavigationMenuLink>
@@ -103,7 +105,7 @@ export const TopMenu = () => {
                   </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>
-            </li> */}
+            </li>
             <li>
               <NavLink
                 to="/genero/men"

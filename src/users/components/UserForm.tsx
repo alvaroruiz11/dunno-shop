@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { useNavigate } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { X, Save } from 'lucide-react';
 
@@ -11,7 +11,6 @@ import { emailPattern } from '@/lib/form-utils';
 import { cn } from '@/lib/utils';
 
 import type { User } from '../interfaces/users-response.interface';
-import { useEffect } from 'react';
 
 interface FormInputs extends User {
   password?: string;
@@ -26,6 +25,8 @@ interface Props {
 }
 
 export const UserForm = ({ user, onSubmit }: Props) => {
+  const navigate = useNavigate();
+
   const isCreating = user.id === 'crear';
 
   const {
@@ -40,16 +41,13 @@ export const UserForm = ({ user, onSubmit }: Props) => {
 
   const password = watch('password');
 
-  useEffect(() => {
-    console.log('cambio');
-  }, [user]);
-
   return (
     <form
       onSubmit={handleSubmit((data) => {
         onSubmit(data);
         resetField('password');
         resetField('password2');
+        resetField('currentPassword');
       })}
     >
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
@@ -201,11 +199,14 @@ export const UserForm = ({ user, onSubmit }: Props) => {
         </Card>
       </div>
       <div className="mt-6 flex justify-end items-center gap-3">
-        <Button size="sm" variant="ghost" type="button" asChild>
-          <Link to="/admin/productos">
-            <X />
-            Cancelar
-          </Link>
+        <Button
+          size="sm"
+          variant="ghost"
+          type="button"
+          onClick={() => navigate(-1)}
+        >
+          <X />
+          Cancelar
         </Button>
         <Button size="sm" type="submit">
           <Save />
