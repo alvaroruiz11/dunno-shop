@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getProductByTermAction } from '../actions/get-product-by-term.action';
+import { createUpdateProductAction } from '../actions/create-update-product.action';
 
 export const useProduct = (id: string) => {
   const queryClient = useQueryClient();
@@ -10,17 +11,17 @@ export const useProduct = (id: string) => {
     retry: false,
   });
 
-  // const mutate = useMutation({
-  //   mutationFn: createUpdateProductAction,
-  //   onSuccess: (data) => {
-  //     // Invalidar cache
-  //     queryClient.invalidateQueries({ queryKey: ['products'] });
-  //     queryClient.invalidateQueries({ queryKey: ['product', { id: data.id }] });
+  const mutation = useMutation({
+    mutationFn: createUpdateProductAction,
+    onSuccess: (data) => {
+      // Invalidar cache
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['product', { id: data.id }] });
 
-  //     // Actualizar queryData
-  //     queryClient.setQueryData(['product', { id: data.id }], data);
-  //   },
-  // });
+      // Actualizar queryData
+      queryClient.setQueryData(['product', { id: data.id }], data);
+    },
+  });
 
-  return { ...query };
+  return { ...query, mutation };
 };

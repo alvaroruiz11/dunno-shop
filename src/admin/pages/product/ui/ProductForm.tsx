@@ -43,7 +43,7 @@ export const ProductForm = ({ product, categories, onSubmit }: Props) => {
   } = useForm<FormProduct>({
     defaultValues: {
       ...product,
-      categoryId: product.category.id,
+      categoryId: product.category?.id,
     },
   });
 

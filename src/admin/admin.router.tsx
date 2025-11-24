@@ -8,6 +8,9 @@ const DashboardPage = lazy(() => import('./pages/dashboard/DashboardPage'));
 const AdminProductsPage = lazy(
   () => import('./pages/products/AdminProductsPage')
 );
+const AdminCategoriesPage = lazy(
+  () => import('./pages/categories/AdminCategoriesPage')
+);
 const AdminProductPage = lazy(() => import('./pages/product/AdminProductPage'));
 const AdminSellersPage = lazy(() => import('./pages/sellers/AdminSellersPage'));
 const AdminSellerPage = lazy(() => import('./pages/seller/AdminSellerPage'));
@@ -36,6 +39,10 @@ export const adminRouter: RouteObject = {
       element: <DashboardPage />,
     },
     // Admin
+    {
+      path: 'categorias',
+      element: <AdminCategoriesPage />,
+    },
     {
       path: 'productos',
       element: <AdminProductsPage />,

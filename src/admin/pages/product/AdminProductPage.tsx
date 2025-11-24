@@ -1,28 +1,40 @@
+import { Navigate, useNavigate, useParams } from 'react-router';
+import { toast } from 'sonner';
+
 import { AdminTitle } from '@/admin/components/AdminTitle';
 import { ProductForm } from './ui/ProductForm';
-import type { Product } from '@/products/interfaces/product.interface';
-import { useProduct } from '@/products/hooks/useProduct';
-import { Navigate, useParams } from 'react-router';
 import { CustomFullScreenLoading } from '@/components/custom/CustomFullScreenLoading';
+import { useProduct } from '@/products/hooks/useProduct';
 import { useCategories } from '@/categories/hooks/useCategories';
-import { createUpdateProductAction } from '@/products/actions/create-update-product.action';
+import type { Product } from '@/products/interfaces/product.interface';
 
 export const AdminProductPage = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
 
-  const { categories, isLoading: isLoadingCategories } = useCategories();
+  const { categories } = useCategories();
 
-  const { data: product, isLoading, isError } = useProduct(id || '');
+  const { data: product, isLoading, isError, mutation } = useProduct(id || '');
 
-  const handleSubmit = (data: Partial<Product>) => {
-    createUpdateProductAction(data);
+  const handleSubmit = async (productLike: Partial<Product>) => {
+    await mutation.mutateAsync(productLike, {
+      onSuccess: (product: Product) => {
+        toast.success('Producto datos guardados correctamente', {
+          position: 'top-right',
+        });
+        navigate(`/admin/productos/${product.id}`, { replace: true });
+      },
+      onError: (error) => {
+        console.log(error);
+
+        toast.error('Error al guardar datos del producto', {
+          position: 'top-right',
+        });
+      },
+    });
   };
 
   if (isLoading) {
-    return <CustomFullScreenLoading />;
-  }
-
-  if (isLoadingCategories) {
     return <CustomFullScreenLoading />;
   }
 
