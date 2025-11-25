@@ -19,7 +19,7 @@ const orders = [
     items: 2,
   },
 ];
-export const OrderHistory = () => {
+export const OrdersPage = () => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'Entregado':

@@ -1,99 +1,53 @@
-import { useState } from 'react';
+import { Navigate } from 'react-router';
 
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-
-import { cn } from '@/lib/utils';
-import {
-  MapPin,
-  Package,
-  User,
-  LogOut,
-  Home,
-  LayoutDashboard,
-} from 'lucide-react';
-import { ProfileInfo } from './ui/ProfileInfo';
-import AddressManager from './ui/AddressManager';
-import { OrderHistory } from './ui/OrderHistory';
-import { HomeProfile } from './ui/HomeProfile';
 import { useAuthStore } from '@/store/auth/auth.store';
-import { Link } from 'react-router';
+import { useUser } from '@/users/hooks/useUser';
+import { toast } from 'sonner';
+import { CustomFullScreenLoading } from '@/components/custom/CustomFullScreenLoading';
 
-const tabs = [
-  { id: 'home', label: 'Inicio', icon: Home },
-  { id: 'info', label: 'Información personal', icon: User },
-  { id: 'addresses', label: 'Direcciones', icon: MapPin },
-  { id: 'orders', label: 'Historial de pedidos', icon: Package },
-];
+import type { User } from '@/users/interfaces/users-response.interface';
+import { ProfileForm } from './ui/ProfileForm';
 
-export default function ProfilePage() {
-  const [activeTab, setActiveTab] = useState('home');
+export const ProfilePage = () => {
+  const userId = useAuthStore((state) => state.user?.id);
 
-  const logout = useAuthStore((state) => state.logout);
-  const isAdmin = useAuthStore((state) => state.isAdmin());
+  const { mutation, data: user, isError, isLoading } = useUser(userId || '');
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'home':
-        return <HomeProfile />;
-      case 'info':
-        return <ProfileInfo />;
-      case 'addresses':
-        return <AddressManager />;
-      case 'orders':
-        return <OrderHistory />;
-      default:
-        return null;
-    }
+  const onSubmit = async (data: Partial<User>) => {
+    await mutation.mutateAsync(
+      { ...data },
+      {
+        onSuccess: () => {
+          toast.success('Datos actualizados', {
+            position: 'top-right',
+          });
+        },
+        onError: (error) => {
+          console.log(error);
+          toast.error('Error al guardar datos', {
+            position: 'top-right',
+          });
+        },
+      }
+    );
   };
 
-  return (
-    <div className="w-full h-full">
-      <div className="bg-[#fafbfc] flex">
-        <aside className="bg-white fixed md:sticky left-0 w-64 inset-y-0 min-w-64 h-screen border-r border-base-200 flex flex-col">
-          <nav className="flex flex-col p-4">
-            {tabs.map((tab) => (
-              <Button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                variant="ghost"
-                className={cn(
-                  `w-full mb-3 inline-flex items-center justify-start text-muted-foreground hover:bg-muted cursor-pointer ${
-                    activeTab === tab.id ? 'bg-muted text-primary' : ''
-                  }`
-                )}
-              >
-                <tab.icon className="w-4 h-4" />
-                <span>{tab.label}</span>
-              </Button>
-            ))}
-            {isAdmin && (
-              <Button
-                variant="ghost"
-                className="w-full mb-3 inline-flex items-center justify-start text-muted-foreground hover:bg-muted cursor-pointer $"
-                asChild
-              >
-                <Link to="/admin">
-                  <LayoutDashboard className="w-4 h-4" />
-                  <span>Dashboard</span>
-                </Link>
-              </Button>
-            )}
-            <Separator className="mb-4" />
-            <Button
-              variant="ghost"
-              onClick={logout}
-              className="inline-flex items-center justify-start hover:bg-destructive/10 cursor-pointer"
-            >
-              <LogOut className="text-destructive" />
-              <span className="text-destructive">Cerrar sesión</span>
-            </Button>
-          </nav>
-        </aside>
+  if (isError) {
+    return <Navigate to="/profile" replace />;
+  }
 
-        {/* Main Content */}
-        <main className="flex-1 p-8">{renderContent()}</main>
-      </div>
-    </div>
+  if (isLoading) {
+    return <CustomFullScreenLoading />;
+  }
+
+  if (!user) {
+    return <Navigate to="/profile" replace />;
+  }
+
+  return (
+    <>
+      <h2 className="text-xl font-din-next mb-4">Información Personal</h2>
+      <ProfileForm user={user} onSubmit={onSubmit}/>
+    </>
   );
-}
+};

@@ -11,6 +11,12 @@ import { authRouter } from './auth/auth.router';
 import { ProfileRoute } from './components/routes/ProtectedRoutes';
 import { adminRouter } from './admin/admin.router';
 
+import { OrdersPage } from './shop/pages/orders/OrdersPage';
+import { AddressHomePage } from './shop/pages/account/ui/AddressHomePage';
+import { ProfilePage } from './shop/pages/profile/ProfilePage';
+import AddressesPage from './shop/pages/addresses/AddressesPage';
+import { AddressPage } from './shop/pages/address/AddressPage';
+
 // lazy
 const CheckoutLayout = lazy(() => import('./shop/layouts/CheckoutLayout'));
 const CheckoutPage = lazy(() => import('./shop/pages/checkout/CheckoutPage'));
@@ -18,7 +24,7 @@ const TermsConditionsPage = lazy(
   () => import('./shop/pages/terms-conditions/TermsConditionsPage')
 );
 
-const ProfilePage = lazy(() => import('./shop/pages/profile/ProfilePage'));
+const AccountPage = lazy(() => import('./shop/pages/account/AccountPage'));
 
 export const appRouter = createBrowserRouter([
   // Shop
@@ -51,12 +57,19 @@ export const appRouter = createBrowserRouter([
         element: <TermsConditionsPage />,
       },
       {
-        path: 'profile',
+        path: 'account',
         element: (
           <ProfileRoute>
-            <ProfilePage />
+            <AccountPage />
           </ProfileRoute>
         ),
+        children: [
+          { path: 'home', element: <AddressHomePage /> },
+          { path: 'info', element: <ProfilePage /> },
+          { path: 'addresses', element: <AddressesPage /> },
+          { path: 'addresses/:id', element: <AddressPage /> },
+          { path: 'orders', element: <OrdersPage /> },
+        ],
       },
     ],
   },

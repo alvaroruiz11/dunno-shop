@@ -19,8 +19,7 @@ const cards = [
     icon: <ShoppingBag className="w-6 h-6 text-indigo-600" />,
   },
 ];
-
-export const HomeProfile = () => {
+export const AddressHomePage = () => {
   return (
     <div className="space-y-8">
       <div className="text-center">

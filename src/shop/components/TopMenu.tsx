@@ -56,7 +56,7 @@ export const TopMenu = () => {
             >
               <Link
                 to={`${
-                  authStatus === 'authenticated' ? '/profile' : '/auth/login'
+                  authStatus === 'authenticated' ? '/account/home' : '/auth/login'
                 }`}
               >
                 <User className="size-5.5" />
