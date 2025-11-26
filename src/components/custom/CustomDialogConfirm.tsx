@@ -39,7 +39,7 @@ export const CustomDialogConfirm = ({
           <DialogClose asChild>
             <Button variant="outline">No</Button>
           </DialogClose>
-          <Button onClick={onConfirm} type="button">
+          <Button onClick={onConfirm} type="button" variant="destructive">
             Si
           </Button>
         </DialogFooter>

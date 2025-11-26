@@ -1,4 +1,3 @@
-import { Link } from 'react-router';
 import { Pencil, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,8 +8,9 @@ import {
   TableBody,
   TableCell,
 } from '@/components/ui/table';
-import type { Category } from '@/products/interfaces/product.interface';
 import { dateFormatter } from '@/lib/formatter';
+import type { Category } from '@/categories/interfaces/category.interface';
+import { Link } from 'react-router';
 
 interface Props {
   categories: Category[];
@@ -23,7 +23,10 @@ export const CategoriesTable = ({ categories }: Props) => {
         <TableRow>
           <TableHead className="text-muted-foreground w-[50px]">#</TableHead>
           <TableHead className="text-muted-foreground">Nombre</TableHead>
-          <TableHead className="text-muted-foreground">Subcategorías</TableHead>
+          <TableHead className="text-muted-foreground">
+            Categoría padre
+          </TableHead>
+          <TableHead className="text-muted-foreground">Nivel</TableHead>
           <TableHead className="text-muted-foreground">Creando en</TableHead>
           <TableHead className="text-muted-foreground">Acciones</TableHead>
         </TableRow>
@@ -39,12 +42,15 @@ export const CategoriesTable = ({ categories }: Props) => {
                 </div>
               </div>
             </TableCell>
-            <TableCell>{'-'}</TableCell>
+            <TableCell>{category.parentCategory?.name || '-'}</TableCell>
+            <TableCell>{`${
+              category.parentCategory ? 'Hijo' : 'Padre'
+            }`}</TableCell>
             <TableCell>
               <span className="font-medium">{dateFormatter(new Date())}</span>
             </TableCell>
             <TableCell className="inline-flex">
-              <Button size="sm" variant="ghost" asChild>
+              <Button size="sm" variant="outline" asChild>
                 <Link to={`/admin/categorias/${category.id}`}>
                   <Pencil />
                 </Link>
