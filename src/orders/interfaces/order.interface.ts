@@ -16,7 +16,7 @@ export interface Order {
   couponId: string | null;
   shopId: string | null;
   Coupon: string | null;
-  user: User;
+  user: User | null;
   orderItems: OrderItem[];
 }
 

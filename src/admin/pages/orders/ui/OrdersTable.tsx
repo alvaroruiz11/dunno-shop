@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 import { Eye } from 'lucide-react';
+import clsx from 'clsx';
 import {
   Table,
   TableBody,
@@ -13,7 +14,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 import type { Order } from '@/orders/interfaces/order.interface';
-import clsx from 'clsx';
 
 interface Props {
   orders: Order[];
@@ -45,7 +45,9 @@ export const OrdersTable = ({ orders }: Props) => {
                 </div>
               </div>
             </TableCell>
-            <TableCell>{`${order.user.firstName} ${order.user.lastName}`}</TableCell>
+            <TableCell>{`${order.user?.firstName ?? 'Sin registro'} ${
+              order.user?.lastName ?? ''
+            }`}</TableCell>
             <TableCell>
               <span className="font-medium">
                 {currencyFormatter(order.totalAmount)}

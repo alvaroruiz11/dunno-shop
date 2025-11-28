@@ -13,15 +13,53 @@ import { Separator } from '@/components/ui/separator';
 import { useCartStore } from '@/store/cart/cart-store';
 import { ProductsInCart } from '../../ui/ProductsInCart';
 import { currencyFormatter } from '@/lib/formatter';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import { useState } from 'react';
+import { useAddressStore } from '@/store/address/address-store';
+import { placeOrderAction } from '@/orders/actions/place-order.action';
+import { toast } from 'sonner';
 
 export const PlaceOrder = () => {
+  const navigate = useNavigate();
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+
   const getSummaryInformation = useCartStore(
     (state) => state.getSummaryInformation
   );
 
+  const cart = useCartStore((state) => state.cart);
+  const cleanCart = useCartStore((state) => state.clearCart);
+  const address = useAddressStore((state) => state.address);
+
   const { totalAmount, totalTax, subTotal, itemsInCart } =
     getSummaryInformation();
+
+  const placeOrder = async () => {
+    setIsPlacingOrder(true);
+
+    const productsToOrder = cart.map((item) => ({
+      productVariantId: item.productVariantId,
+      quantity: item.quantity,
+    }));
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { departmentId, provinceId, ...addressToOrder } = address;
+
+    const resp = await placeOrderAction(productsToOrder, addressToOrder);
+
+    if (!resp.ok) {
+      setIsPlacingOrder(false);
+      toast.error('Error en crear orden', { position: 'top-center' });
+      return;
+    }
+    //* Todo salio bien
+    cleanCart();
+    navigate(`orden/${resp.order!.id}`);
+    toast.success('Orden creada, proceda con el pago', {
+      position: 'top-center',
+    });
+  };
+
   return (
     <Card className="w-full max-w-lg mx-auto h-fit">
       <CardHeader>
@@ -56,7 +94,11 @@ export const PlaceOrder = () => {
       </CardContent>
       <CardFooter className="flex-col gap-5">
         <div className="flex items-center w-full gap-3">
-          <Checkbox id="terms" />
+          <Checkbox
+            id="terms"
+            defaultChecked={isPlacingOrder}
+            onClick={() => setIsPlacingOrder(!isPlacingOrder)}
+          />
           <Label htmlFor="terms">
             He leído y acepto los
             <Link to="/terminos-y-condiciones" className="underline">
@@ -64,7 +106,11 @@ export const PlaceOrder = () => {
             </Link>
           </Label>
         </div>
-        <Button className="w-full py-6 text-lg font-din-next">
+        <Button
+          className="w-full py-6 text-lg font-din-next"
+          disabled={!isPlacingOrder}
+          onClick={placeOrder}
+        >
           Realizar pedido
         </Button>
       </CardFooter>

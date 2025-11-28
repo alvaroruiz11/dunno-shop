@@ -10,11 +10,14 @@ export const AdminOrderPage = () => {
 
   const { data: order, isLoading, isError } = useOrder(id || '');
 
+  if (isError) {
+    return <Navigate to="/admin/ordenes" replace />;
+  }
   if (isLoading) {
     return <CustomFullScreenLoading />;
   }
 
-  if (isError || !order) {
+  if (!order) {
     return <Navigate to="/admin/ordenes" replace />;
   }
 
