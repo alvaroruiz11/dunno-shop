@@ -9,6 +9,7 @@ export interface Product {
   createdAt: Date;
   tags: string[];
   description: string;
+  isActive: boolean;
   variants: Variant[];
   category: Category;
   images: string[];
