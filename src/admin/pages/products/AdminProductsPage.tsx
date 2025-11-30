@@ -18,13 +18,13 @@ import { ButtonGroup } from '@/components/ui/button-group';
 
 export const AdminProductsPage = () => {
   const queryClient = useQueryClient();
-  const [active, setActive] = useState<'0' | '1' | undefined>(undefined);
 
-  const { products, totalPages, isLoading } = useProducts('', active);
+  const [active, setActive] = useState<'0' | '1' | undefined>(undefined);
+  const [isOpenConfirm, setIsOpenConfirm] = useState(false);
 
   const productId = useRef<string | undefined>(undefined);
 
-  const [isOpenConfirm, setIsOpenConfirm] = useState(false);
+  const { products, totalPages, isLoading } = useProducts('', active);
 
   const handleDeleteProduct = async () => {
     if (!productId.current) return;
