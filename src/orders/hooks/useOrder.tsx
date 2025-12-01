@@ -7,11 +7,9 @@ export const useOrder = (id: string) => {
     queryFn: () => getOrderByIdAction(id || ''),
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: false,
-    enabled: !!id,
   });
 
   return {
     ...query,
   };
 };
-

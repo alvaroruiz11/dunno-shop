@@ -12,12 +12,22 @@ export interface Order {
   transactionId: null;
   createdAt: Date;
   updatedAt: Date;
-  userId: string;
-  couponId: string | null;
-  shopId: string | null;
-  Coupon: string | null;
+  userId: null;
+  couponId: null;
+  shopId: null;
+  Coupon: null;
   user: User | null;
+  invoice: Invoice | null;
   orderItems: OrderItem[];
+}
+
+export interface Invoice {
+  id: string;
+  documentType: string;
+  invoiceNumber: string;
+  invoiceUrl: string;
+  socialReason: string;
+  nitNumber: string;
 }
 
 export interface OrderItem {

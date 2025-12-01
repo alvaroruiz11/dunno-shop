@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText } from 'lucide-react';
+import { Link } from 'react-router';
 
 interface Props {
   order: Order;
@@ -42,12 +43,16 @@ export const OrderInvoiceTable = ({ order }: Props) => {
             </span>
           </div>
         </CardTitle>
-        <CardAction>
-          <Button size="sm" variant="outline">
-            <FileText />
-            Factura
-          </Button>
-        </CardAction>
+        {order.invoice && (
+          <CardAction>
+            <Button size="sm" variant="outline" asChild>
+              <Link to={order.invoice?.invoiceUrl} target="_blank">
+                <FileText />
+                Factura
+              </Link>
+            </Button>
+          </CardAction>
+        )}
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">

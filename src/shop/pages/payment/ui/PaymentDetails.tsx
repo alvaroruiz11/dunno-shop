@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { currencyFormatter, dateFormatter } from '@/lib/formatter';
+import { currencyFormatter } from '@/lib/formatter';
 import type { Order } from '@/orders/interfaces/order.interface';
 import { User, CreditCard, Info } from 'lucide-react';
 
@@ -122,7 +122,7 @@ export const PaymentDetails = ({ order }: Props) => {
       <Card className="bg-blue-50 border-blue-200">
         <CardContent className="p-4">
           <div className="flex gap-3">
-            <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <Info className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
             <p className="text-sm text-blue-900">
               Las recaudaciones de los distintos canales de pago pueden aparecer
               en su extracto o detalle como Todotix, Todotix SRL o Todotix 3D.

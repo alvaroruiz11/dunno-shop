@@ -1,3 +1,8 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -15,7 +20,9 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useAddressStore } from '@/store/address/address-store';
 import { PlaceOrder } from './ui/PlaceOrder';
-import { useForm } from 'react-hook-form';
+import { useCartStore } from '@/store/cart/cart-store';
+import { placeOrderAction } from '@/orders/actions/place-order.action';
+import { cn } from '@/lib/utils';
 
 interface FormInputs {
   documentType: string;
@@ -24,13 +31,72 @@ interface FormInputs {
 }
 
 export const ReviewPaymentStep = () => {
+  const navigate = useNavigate();
   const address = useAddressStore((state) => state.address);
+
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+
+  const cart = useCartStore((state) => state.cart);
+  const cleanCart = useCartStore((state) => state.clearCart);
 
   const {
     register,
+    trigger,
     watch,
     formState: { errors },
+    getValues,
   } = useForm<FormInputs>();
+
+  const placeOrder = async () => {
+    const valid = await trigger();
+
+    if (!valid) return;
+
+    setIsPlacingOrder(true);
+
+    const productsToOrder = cart.map((item) => ({
+      productVariantId: item.productVariantId,
+      quantity: item.quantity,
+    }));
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { departmentId, provinceId, ...addressToOrder } = address;
+
+    const documentType = getValues('documentType');
+    const nitNumber = getValues('nitNumber');
+    const socialReason = getValues('socialReason');
+
+    const orderInvoice =
+      documentType === 'NIT'
+        ? {
+            documentType: documentType,
+            nitNumber: nitNumber,
+            socialReason: socialReason,
+          }
+        : {
+            documentType: documentType,
+            nitNumber: address.ci,
+            socialReason: `${address.firstName} ${address.lastName}`,
+          };
+
+    const resp = await placeOrderAction(
+      productsToOrder,
+      addressToOrder,
+      orderInvoice
+    );
+
+    if (!resp.ok) {
+      setIsPlacingOrder(false);
+      toast.error('Error en crear orden', { position: 'top-center' });
+      return;
+    }
+    //* Todo salio bien
+    cleanCart();
+    navigate(`/orden/${resp.order!.id}`);
+    toast.success('Orden creada, proceda con el pago', {
+      position: 'top-center',
+    });
+  };
 
   const documentType = watch('documentType');
 
@@ -106,11 +172,11 @@ export const ReviewPaymentStep = () => {
                 <NativeSelectOption disabled value="">
                   Seleccionar comprobante
                 </NativeSelectOption>
-                <NativeSelectOption value="ci">CI</NativeSelectOption>
-                <NativeSelectOption value="nit">NIT</NativeSelectOption>
+                <NativeSelectOption value="CI">CI</NativeSelectOption>
+                <NativeSelectOption value="NIT">NIT</NativeSelectOption>
               </NativeSelect>
             </Field>
-            {documentType === 'nit' && (
+            {documentType === 'NIT' && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field>
                   <FieldLabel htmlFor="nit">Numero de NIT</FieldLabel>
@@ -118,6 +184,7 @@ export const ReviewPaymentStep = () => {
                     {...register('nitNumber', { required: true })}
                     id="nit"
                     placeholder="Numero de NIT"
+                    className={cn({ 'border-destructive': errors.nitNumber })}
                   />
                   {errors.nitNumber && (
                     <p className="text-destructive text-xs">
@@ -126,13 +193,15 @@ export const ReviewPaymentStep = () => {
                   )}
                 </Field>
                 <Field>
-                  <FieldLabel
+                  <FieldLabel htmlFor="social-reason">Razón Social</FieldLabel>
+                  <Input
                     {...register('socialReason', { required: true })}
-                    htmlFor="social-reason"
-                  >
-                    Razón Social
-                  </FieldLabel>
-                  <Input id="social-reason" placeholder="Razón social" />
+                    id="social-reason"
+                    placeholder="Razón social"
+                    className={cn({
+                      'border-destructive': errors.socialReason,
+                    })}
+                  />
                   {errors.socialReason && (
                     <p className="text-destructive text-xs">
                       Este campo es requerido
@@ -165,7 +234,11 @@ export const ReviewPaymentStep = () => {
         </FieldSet>
       </FieldGroup>
       <div>
-        <PlaceOrder />
+        <PlaceOrder
+          isPlacingOrder={isPlacingOrder}
+          setIsPlacingOrder={setIsPlacingOrder}
+          onPlaceOrder={placeOrder}
+        />
       </div>
     </div>
   );

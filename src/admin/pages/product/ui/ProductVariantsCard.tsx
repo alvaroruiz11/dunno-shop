@@ -71,8 +71,18 @@ export const ProductVariantsCard = ({
   };
 
   const addVariante = () => {
+    formValue.stock = Number(formValue.stock);
+    formValue.stockAlert = Number(formValue.stockAlert);
     onAddVariant(formValue);
     setIsOpen(false);
+    setFormValue({
+      id: '',
+      sku: '',
+      color: null,
+      size: '',
+      stock: 0,
+      stockAlert: 0,
+    });
   };
 
   return (
@@ -149,7 +159,11 @@ export const ProductVariantsCard = ({
           </TableBody>
         </Table>
       </CardContent>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <Dialog
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        aria-describedby="dialog variant"
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Crear Variante</DialogTitle>

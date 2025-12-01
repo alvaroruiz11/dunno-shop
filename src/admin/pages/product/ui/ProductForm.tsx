@@ -54,6 +54,7 @@ export const ProductForm = ({ product, categories, onSubmit }: Props) => {
 
   // variants
   const addVariant = (variant: Variant) => {
+    console.log("🚀 ~ addVariant ~ variant:", variant)
     const variantSet = new Set(getValues('variants'));
     variantSet.add(variant);
     setValue('variants', Array.from(variantSet));

@@ -17,12 +17,23 @@ interface AddressLike {
   cityId: string;
 }
 
+interface InvoiceLike {
+  documentType?: string;
+  nitNumber?: string;
+  socialReason?: string;
+}
+
 export const placeOrderAction = async (
   items: OrderItemLike[],
-  address: AddressLike
+  address: AddressLike,
+  invoice: InvoiceLike
 ) => {
   try {
-    const { data } = await dunnoApi.post<Order>('/orders', { items, address });
+    const { data } = await dunnoApi.post<Order>('/orders', {
+      items,
+      address,
+      invoice,
+    });
     return {
       ok: true,
       order: data,

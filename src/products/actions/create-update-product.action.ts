@@ -17,6 +17,7 @@ export const createUpdateProductAction = async (
     createdAt,
     category,
     discount,
+    isActive,
     ...rest
   } = productLike;
 

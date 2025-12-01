@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -13,53 +14,24 @@ import { Separator } from '@/components/ui/separator';
 import { useCartStore } from '@/store/cart/cart-store';
 import { ProductsInCart } from '../../ui/ProductsInCart';
 import { currencyFormatter } from '@/lib/formatter';
-import { Link, useNavigate } from 'react-router';
-import { useState } from 'react';
-import { useAddressStore } from '@/store/address/address-store';
-import { placeOrderAction } from '@/orders/actions/place-order.action';
-import { toast } from 'sonner';
 
-export const PlaceOrder = () => {
-  const navigate = useNavigate();
-  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+interface Props {
+  isPlacingOrder: boolean;
+  setIsPlacingOrder: (isPlacing: boolean) => void;
+  onPlaceOrder: () => void;
+}
 
+export const PlaceOrder = ({
+  isPlacingOrder,
+  setIsPlacingOrder,
+  onPlaceOrder,
+}: Props) => {
   const getSummaryInformation = useCartStore(
     (state) => state.getSummaryInformation
   );
 
-  const cart = useCartStore((state) => state.cart);
-  const cleanCart = useCartStore((state) => state.clearCart);
-  const address = useAddressStore((state) => state.address);
-
   const { totalAmount, totalTax, subTotal, itemsInCart } =
     getSummaryInformation();
-
-  const placeOrder = async () => {
-    setIsPlacingOrder(true);
-
-    const productsToOrder = cart.map((item) => ({
-      productVariantId: item.productVariantId,
-      quantity: item.quantity,
-    }));
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { departmentId, provinceId, ...addressToOrder } = address;
-
-    const resp = await placeOrderAction(productsToOrder, addressToOrder);
-
-    if (!resp.ok) {
-      setIsPlacingOrder(false);
-      toast.error('Error en crear orden', { position: 'top-center' });
-      return;
-    }
-    //* Todo salio bien
-    cleanCart();
-    navigate(`orden/${resp.order!.id}`);
-    toast.success('Orden creada, proceda con el pago', {
-      position: 'top-center',
-    });
-  };
-
   return (
     <Card className="w-full max-w-lg mx-auto h-fit">
       <CardHeader>
@@ -109,7 +81,7 @@ export const PlaceOrder = () => {
         <Button
           className="w-full py-6 text-lg font-din-next"
           disabled={!isPlacingOrder}
-          onClick={placeOrder}
+          onClick={onPlaceOrder}
         >
           Realizar pedido
         </Button>
