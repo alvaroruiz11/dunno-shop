@@ -24,6 +24,7 @@ const TermsConditionsPage = lazy(
   () => import('./shop/pages/terms-conditions/TermsConditionsPage')
 );
 const PaymentPage = lazy(() => import('./shop/pages/payment/PaymentPage'));
+const SearchPage = lazy(() => import('./shop/pages/search/SearchPage'));
 
 const AccountPage = lazy(() => import('./shop/pages/account/AccountPage'));
 
@@ -56,6 +57,10 @@ export const appRouter = createBrowserRouter([
       {
         path: 'orden/:id',
         element: <PaymentPage />,
+      },
+      {
+        path: 'search',
+        element: <SearchPage />,
       },
       {
         path: 'pago/:orderId',

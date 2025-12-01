@@ -6,13 +6,14 @@ interface Options {
   limit?: number;
   gender?: string;
   category?: string;
+  query?: string;
   active?: '0' | '1';
 }
 
 export const getProductsAction = async (
   options: Options
 ): Promise<ProductsResponse> => {
-  const { page, limit = 12, gender, category, active } = options;
+  const { page, limit = 12, gender, category, query, active } = options;
 
   const { data } = await dunnoApi.get<ProductsResponse>('/products', {
     params: {
@@ -20,6 +21,7 @@ export const getProductsAction = async (
       limit,
       gender: gender ? gender.toUpperCase() : undefined,
       category,
+      q: query,
       active,
     },
   });
