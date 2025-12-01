@@ -3,20 +3,27 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router';
-import { useOrders } from '@/orders/hooks/useOrders';
+
 import { CustomFullScreenLoading } from '@/components/custom/CustomFullScreenLoading';
 import { currencyFormatter, dateFormatter } from '@/lib/formatter';
+import { useEffect, useState } from 'react';
+import type { Order } from '@/orders/interfaces/order.interface';
+import { getOrdersByIUserAction } from '@/orders/actions/get-order-by-user.action';
 
 export const OrdersPage = () => {
-  const { data: ordersData, isLoading } = useOrders();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getStatusIcon = (status: string) => {
     const statusLower = status.toLowerCase();
-    
-    if (statusLower.includes('entregado') || statusLower.includes('completado')) {
+
+    if (
+      statusLower.includes('entregado') ||
+      statusLower.includes('completado')
+    ) {
       return <CheckCircle2 className="w-5 h-5 text-green-600" />;
     }
-    
+
     if (
       statusLower.includes('camino') ||
       statusLower.includes('enviado') ||
@@ -24,21 +31,24 @@ export const OrdersPage = () => {
     ) {
       return <Truck className="w-5 h-5 text-blue-500" />;
     }
-    
+
     if (statusLower.includes('pendiente') || statusLower.includes('espera')) {
       return <Clock className="w-5 h-5 text-yellow-500" />;
     }
-    
+
     return <Package className="w-5 h-5 text-gray-500" />;
   };
 
   const getStatusBadgeVariant = (status: string) => {
     const statusLower = status.toLowerCase();
-    
-    if (statusLower.includes('entregado') || statusLower.includes('completado')) {
+
+    if (
+      statusLower.includes('entregado') ||
+      statusLower.includes('completado')
+    ) {
       return 'secondary' as const;
     }
-    
+
     if (
       statusLower.includes('camino') ||
       statusLower.includes('enviado') ||
@@ -46,15 +56,19 @@ export const OrdersPage = () => {
     ) {
       return 'outline' as const;
     }
-    
+
     return 'default' as const;
   };
+
+  useEffect(() => {
+    setIsLoading(true);
+    getOrdersByIUserAction().then((orders) => setOrders(orders));
+    setIsLoading(false);
+  }, []);
 
   if (isLoading) {
     return <CustomFullScreenLoading />;
   }
-
-  const orders = ordersData?.data || [];
 
   if (orders.length === 0) {
     return (
